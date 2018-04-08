@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+
     'PatternBuddy.apps.PatternbuddyConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,9 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
+
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -69,6 +73,25 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'DjangoWebsite.wsgi.application'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'PatternBuddy': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 
 
 # Database
@@ -100,6 +123,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/

@@ -1,0 +1,11 @@
+Builder
+A Normal Director
+B Interface Builder
+C Normal Concrete Builder
+D Normal Product
+End_Members
+A has B
+A calls B
+C inherits B
+C creates D
+End_Connections

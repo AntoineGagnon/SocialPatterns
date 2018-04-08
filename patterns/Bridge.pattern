@@ -1,0 +1,10 @@
+Bridge
+A Normal Refined Abstraction
+B Abstract Abstraction
+C Normal Concrete Implementor
+D Interface Implementor
+End_Members
+A inherits B
+C inherits D
+B has D
+End_Connections

@@ -1,19 +1,22 @@
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect, HttpResponse
 # Create your views here.
 from django.urls import reverse
 from django.views import generic
 
 from PatternBuddy.models import Repository
+from PatternBuddy.repository_loader import load_from_github, analyze_repo
 
 logger = logging.getLogger(__name__)
 
 
-def index(request):
-    return render(request, "PatternBuddy/index.html")
+class IndexListView(generic.ListView):
+    model = Repository
+    context_object_name = 'recent_repo_list'
+    queryset = Repository.objects.all()
+    template_name = "PatternBuddy/index.html"
 
 
 class DetailView(generic.DetailView):
@@ -23,8 +26,13 @@ class DetailView(generic.DetailView):
 
 def submit(request):
     repository_name = request.POST['repo_textfield']
+    logger.warning("repo_name = " + repository_name)
     try:
-        repository = Repository.objects.get(repo_name__icontains=repository_name)
+        repository = Repository.objects.get(full_name__icontains=repository_name)
+        logger.debug("Repo found")
     except ObjectDoesNotExist:
-        repository = Repository.load_from_github(repository_name)
+        repository = load_from_github(repository_name=repository_name)
+        if repository is None:
+            return HttpResponse("The repository you entered does not exist")
     return HttpResponseRedirect(reverse('repository:detail', args=(repository.id,)))
+

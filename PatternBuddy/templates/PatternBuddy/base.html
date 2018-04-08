@@ -28,14 +28,15 @@
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            {% url 'repository:index' as index_url %}
+            <li class="nav-item {% if request.path == index_url %}active{% endif %}">
+                <a class="nav-link" href="{{ index_url }}">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
+                <a class="nav-link" href="/admin">Admin</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
+                <a class="nav-link disabled" href="/repository">Repository</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown"
@@ -47,8 +48,10 @@
                 </div>
             </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+        <form class="form-inline my-2 my-lg-0" action="{% url 'repository:submit' %}" method="post">
+            {% csrf_token %}
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search"
+                   name="repo_textfield" id="repository_url">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
     </div>

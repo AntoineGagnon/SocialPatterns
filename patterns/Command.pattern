@@ -1,0 +1,12 @@
+Command
+A Normal Concrete Command
+B Abstracted Command
+C Normal Receiver
+D Normal Invoker
+End_Members
+A inherits B
+A has C
+A calls C
+D has B
+D calls B
+End_Connections

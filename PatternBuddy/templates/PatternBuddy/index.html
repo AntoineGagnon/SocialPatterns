@@ -1,13 +1,47 @@
 {% extends 'PatternBuddy/base.html' %}
 {% block content %}
-        <h1>Repository Loader</h1>
+    <h1>Repository Loader</h1>
 
-        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-        <form action="{% url 'repository:submit' %}" method="post">
-            {% csrf_token %}
-            <label for="repository_url">Repository name or URL</label>
-            <input type="text" name="repo_textfield" id="repository_url"/>
-            <input type="submit" value="Search"/>
-        </form>
+    <div class="row ">
+
+        <div class="col-6 offset-3 ">
+            <form action="{% url 'repository:submit' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="repository_url">Enter repository name</label>
+                    <input class="form-control" type="text" name="repo_textfield" id="repository_url"/>
+                    <input class="btn btn-primary mt-2" type="submit" value="Search"/>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-6 offset-3">
+
+        <h2>Recent repositories analyzed</h2>
+            <div class="row">
+                {% if recent_repo_list %}
+
+                    <ul class="list-group">
+
+                        {% for repo in recent_repo_list %}
+                            <li class="list-group-item">
+                                <a href="{% url 'repository:detail' repo.id %}">{{ repo.full_name }}</a>
+                            </li>
+                        {% endfor %}
+
+                    </ul>
+                {% else %}
+                    <p>There are no repositories analyzed.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
 {% endblock %}

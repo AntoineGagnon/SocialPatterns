@@ -1,0 +1,11 @@
+Visitor
+A Normal Concrete Element
+B Abstracted Element
+C Normal Concrete Visitor
+D Abstracted Visitor
+End_Members
+A inherits B
+C inherits D
+B references D
+D references A
+End_Connections

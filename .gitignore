@@ -1,4 +1,5 @@
-
+socialpatterns-c03d755a739c.json
+db.sqlite3
 *.egg-info
 *.pot
 *.py[co]
@@ -106,6 +107,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.idea
 
 # Spyder project settings
 .spyderproject

@@ -1,0 +1,11 @@
+Abstract Factory
+A Normal Concrete Factory
+B Abstracted Abstract Factory
+C Normal Product
+D Abstracted Abstract Product
+End_Members
+A inherits B
+C inherits D
+A creates C
+A uses C
+End_Connections

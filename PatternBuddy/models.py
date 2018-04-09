@@ -11,8 +11,6 @@ class Language(models.Model):
 
 
 class Repository(models.Model):
-
-
     id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=200)
     full_name = models.CharField(max_length=200)
@@ -28,7 +26,7 @@ class Repository(models.Model):
         return Contribution.objects.filter(repository=self)
 
     def get_comment_pr_ratio(self):
-        return self.comments_count/self.pull_request_count
+        return self.comments_count / self.pull_request_count
 
     def get_dp_count(self):
         return self.patterninrepo_set.count()
@@ -82,9 +80,9 @@ class PatternInRepo(models.Model):
 class ClassFileWithPattern(models.Model):
     modifications_count = models.PositiveIntegerField(default=1)
     pattern_in_repo = models.ForeignKey(PatternInRepo, on_delete=models.CASCADE)
-    class_name = models.CharField(max_length=200,default="ClassName")
+    class_name = models.CharField(max_length=200, default="ClassName")
     url = models.URLField(default="https://github.com")
-    role = models.CharField(max_length=200,default="role")
+    role = models.CharField(max_length=200, default="role")
 
     def __str__(self):
         return "File " + self.class_name + " has pattern " + self.pattern_in_repo.design_pattern.design_name

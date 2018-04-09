@@ -5,9 +5,10 @@ from django.http import HttpResponseRedirect, HttpResponse
 # Create your views here.
 from django.urls import reverse
 from django.views import generic
+from excel_response import ExcelResponse
 
 from PatternBuddy.models import Repository
-from PatternBuddy.repository_loader import load_from_github, analyze_repo
+from PatternBuddy.repository_loader import load_from_github
 
 logger = logging.getLogger(__name__)
 
@@ -36,3 +37,7 @@ def submit(request):
             return HttpResponse("The repository you entered does not exist")
     return HttpResponseRedirect(reverse('repository:detail', args=(repository.id,)))
 
+
+def save_to_xlsx(request):
+    data = Repository.objects.all()
+    return ExcelResponse(data, "data_socialpatterns")

@@ -11,6 +11,8 @@ class Language(models.Model):
 
 
 class Repository(models.Model):
+
+
     id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=200)
     full_name = models.CharField(max_length=200)
@@ -20,6 +22,7 @@ class Repository(models.Model):
     comments_count = models.PositiveIntegerField(default=0)
     contributors_count = models.PositiveIntegerField(default=0)
     size = models.PositiveIntegerField(default=0)
+    dp_count = models.PositiveIntegerField(default=0)
 
     def get_contributions(self):
         return Contribution.objects.filter(repository=self)
@@ -27,9 +30,9 @@ class Repository(models.Model):
     def get_comment_pr_ratio(self):
         return self.comments_count/self.pull_request_count
 
-
     def get_dp_count(self):
         return self.patterninrepo_set.count()
+
     class Meta:
         verbose_name_plural = "repositories"
 

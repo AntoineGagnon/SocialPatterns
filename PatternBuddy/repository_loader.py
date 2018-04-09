@@ -28,7 +28,7 @@ def load_from_github(repository_name):
         full_name = repo_api.full_name
     except UnknownObjectException:
         return None
-    repo = Repository(id=repo_api.id, full_name=full_name, name=repo_api.name)
+    repo = Repository(id=repo_api.id, full_name=full_name, name=repo_api.name, size=repo_api.size)
     repo.language, created = Language.objects.get_or_create(name=repo_api.language)
     repo.save()
     logger.debug(datetime.datetime.now().strftime("%H:%M:%S") + "Getting contributors")
@@ -55,6 +55,7 @@ def load_from_github(repository_name):
     pull_requests = repo_api.get_pulls(state="all")
     pr_number = len(list(pull_requests))
     comments = 0
+
     for pr in pull_requests:
         try:
             comments += pr.comments
@@ -101,8 +102,7 @@ def process_dpcore_output(output, repo_api, repo_db):
                 dp_name = line.replace("HyperCandidate of Pattern ", "").replace(":", "")
 
                 current_dp, created = DesignPattern.objects.get_or_create(design_name=dp_name)
-                current_pattern_in_repo, created = PatternInRepo.objects.create(design_pattern=current_dp,
-                                                                                repository=repo_db)
+                current_pattern_in_repo = PatternInRepo.objects.create(design_pattern=current_dp, repository=repo_db)
 
             if line.startswith(("A", "B", "C", "D", "E")):
 
@@ -134,7 +134,7 @@ def process_dpcore_output(output, repo_api, repo_db):
                     if created:
                         current_pattern_in_repo.modifications_count += class_file_with_pattern.modifications_count
                         current_pattern_in_repo.save()
-
+    repo_db.dp_count = repo_db.get_dp_count()
     current_pattern_in_repo.save()
 
 

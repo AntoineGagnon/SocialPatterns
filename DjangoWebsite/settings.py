@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
+    'constance',
+    'constance.backends.database',
 ]
 
 MIDDLEWARE = [
@@ -89,6 +91,17 @@ LOGGING = {
             'propagate': True,
         },
     },
+}
+
+# Configuration Constance
+# https://django-constance.readthedocs.io/en/latest/
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+CONSTANCE_CONFIG = {
+    'GET_FILES': (False, 'Get files associated with each pattern', bool),
+    'GET_FILE_MODIFICATIONS_COUNT': (False, 'Get amount of modifications on a file', bool),
+    'GET_PATTERN_CLASSES': (False, 'Get classes of each elements of a pattern', bool),
+    'GET_CONTRIBUTORS_DATA': (False, 'Get amount of contributions for each contributor', bool),
 }
 
 # Database

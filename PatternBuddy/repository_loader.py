@@ -4,10 +4,12 @@ import re
 import ssl
 import subprocess
 
+from constance import config
+from django.core.exceptions import ObjectDoesNotExist
 from github import Github, Repository as RepoAPI, UnknownObjectException
 
 from PatternBuddy.models import Repository, Language, PatternInRepo, DesignPattern, \
-    ClassFileWithPattern
+    ClassFileWithPattern, Contributor, Contribution
 
 logger = logging.getLogger(__name__)
 
@@ -35,21 +37,22 @@ def load_from_github(repository_name):
     contributor_counter = len(list(repo_api.get_contributors()))
     repo.contributors_count = contributor_counter
 
-    # for contrib in repo_api.get_contributors():
-    #     contributor_counter += 1
-    #     try:
-    #         contributor_db = Contributor.objects.get(login__exact=contrib.login)
-    #     except ObjectDoesNotExist:
-    #         contributor_db = Contributor()
-    #         contributor_db.login = contrib.login
-    #         contributor_db.followers_count = contrib.followers
-    #         contributor_db.url = contrib.html_url
-    #         contributor_db.save()
-    #
-    #     contribution_db = Contribution(repository=repo,
-    #                                    contributor=contributor_db,
-    #                                    amount=contrib.contributions)
-    #     contribution_db.save()
+    if config.GET_CONTRIBUTORS_DATA:
+        for contrib in repo_api.get_contributors():
+            contributor_counter += 1
+            try:
+                contributor_db = Contributor.objects.get(login__exact=contrib.login)
+            except ObjectDoesNotExist:
+                contributor_db = Contributor()
+                contributor_db.login = contrib.login
+                contributor_db.followers_count = contrib.followers
+                contributor_db.url = contrib.html_url
+                contributor_db.save()
+
+            contribution_db = Contribution(repository=repo,
+                                           contributor=contributor_db,
+                                           amount=contrib.contributions)
+            contribution_db.save()
 
     logger.debug(datetime.datetime.now().strftime("%H:%M:%S") + "Getting pull request Data")
     pull_requests = repo_api.get_pulls(state="all")
@@ -104,7 +107,7 @@ def process_dpcore_output(output, repo_api, repo_db):
                 current_dp, created = DesignPattern.objects.get_or_create(design_name=dp_name)
                 current_pattern_in_repo = PatternInRepo.objects.create(design_pattern=current_dp, repository=repo_db)
 
-            if line.startswith(("A", "B", "C", "D", "E")):
+            if line.startswith(("A", "B", "C", "D", "E")) and config.GET_PATTERN_CLASSES:
 
                 p = re.compile("[A-Z]?\((.*)\): (.*)")
                 p = p.search(line)
@@ -115,25 +118,30 @@ def process_dpcore_output(output, repo_api, repo_db):
                 if "[" in class_name:
                     for real_name in re.sub(r"[^a-zA-Z ]", "", class_name).split(" "):
                         if real_name != "":
-                            path = get_file_from_repo(real_name, repo_db.name)
+                            if config.GET_FILES:
+                                path = get_file_from_repo(real_name, repo_db.name)
+                            else:
+                                path = "Files were not collected for this DP"
 
                             class_file_with_pattern, created = ClassFileWithPattern.objects.get_or_create(
                                 pattern_in_repo=current_pattern_in_repo, role=p.group(1), class_name=real_name,
-                                url=path, modifications_count=len(
-                                    repo_api.get_commits(path=path).get_page(0)))
-                            if created:
-                                current_pattern_in_repo.modifications_count += class_file_with_pattern.modifications_count
-                                current_pattern_in_repo.save()
+                                url=path)
+                            if config.GET_FILE_MODIFICATIONS_COUNT:
+                                class_file_with_pattern.modifications_count = len(list(repo_api.get_commits(path=path)))
+                                class_file_with_pattern.save()
+
                 else:
-                    path = get_file_from_repo(class_name, repo_db.name)
+                    if config.GET_FILES:
+                        path = get_file_from_repo(class_name, repo_db.name)
+                    else:
+                        path = "Files were not collected for this DP"
 
                     class_file_with_pattern, created = ClassFileWithPattern.objects.get_or_create(
                         pattern_in_repo=current_pattern_in_repo, role=p.group(1), class_name=class_name,
-                        url=path, modifications_count=len(
-                            repo_api.get_commits(path=path).get_page(0)))
-                    if created:
-                        current_pattern_in_repo.modifications_count += class_file_with_pattern.modifications_count
-                        current_pattern_in_repo.save()
+                        url=path)
+                    if config.GET_FILE_MODIFICATIONS_COUNT:
+                        class_file_with_pattern.modifications_count = len(list(repo_api.get_commits(path=path)))
+                        class_file_with_pattern.save()
     repo_db.dp_count = repo_db.get_dp_count()
     current_pattern_in_repo.save()
 

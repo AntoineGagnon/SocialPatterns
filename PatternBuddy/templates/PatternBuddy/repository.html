@@ -8,106 +8,120 @@
     <div class="row">
         <div class="col-6">
             <div class="row">
-                <h3>Design Patterns</h3>
-                <table class="table table-bordered">
-                    <thead class="thead-light">
-                    <tr>
-                        <th scope="col">Design Patterns</th>
-                        <th scope="col">File</th>
-                        <th scope="col">Role</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for dp in repository.patterninrepo_set.all %}
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <h3>Design Patterns</h3>
+                    <table class="table table-bordered">
+                        <thead class="thead-light">
                         <tr>
-                            <td rowspan="{{ dp.classfilewithpattern_set.all|length }}">{{ dp.design_pattern }}</td>
-                            {% for classfile in dp.classfilewithpattern_set.all %}
+                            <th scope="col">Design Patterns</th>
+                            <th scope="col">File</th>
+                            <th scope="col">Role</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for dp in repository.patterninrepo_set.all %}
+                            <tr>
+                                <td rowspan="{{ dp.classfilewithpattern_set.all|length }}">{{ dp.design_pattern }}</td>
+                                {% for classfile in dp.classfilewithpattern_set.all %}
 
-                                {% if classfile != dp.classfilewithpattern_set.all.0 %}
-                                    <tr>
-                                {% endif %}
-                            <td>{{ classfile.url }}</td>
-                            <td>{{ classfile.role }}</td>
-                            </tr>
+                                    {% if classfile != dp.classfilewithpattern_set.all.0 %}
+                                        <tr>
+                                    {% endif %}
+                                <td>{{ classfile.url }}</td>
+                                <td>{{ classfile.role }}</td>
+                                </tr>
 
-                            {% endfor %}
-                    {% endfor %}
-                    </tbody>
-                </table>
+                                {% endfor %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
         </div>
         <div class="col-6">
             <div class="row">
-                <h3>Repository stats</h3>
-                <div class="card-group">
-                    <div class="card">
-                        <div class="card-block">
-                            <h5 class="card-title bg-primary text-white">Pull Requests</h5>
-                            <p class="card-text">{{ object.pull_request_count }}</p>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <h3>Repository stats</h3>
+                    <div class="card-group">
+                        <div class="card">
+                            <div class="card-block">
+                                <h5 class="card-title bg-primary text-white">Pull Requests</h5>
+                                <p class="card-text">{{ object.pull_request_count }}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-block">
+                        <div class="card">
+                            <div class="card-block">
 
-                            <h5 class="card-title bg-primary text-white">Comments/PR</h5>
-                            <p class="card-text"> {{ object.get_comment_pr_ratio }}</p>
+                                <h5 class="card-title bg-primary text-white">Comments/PR</h5>
+                                <p class="card-text"> {{ object.get_comment_pr_ratio }}</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-block">
+                                <h5 class="card-title bg-primary text-white">Comments</h5>
+                                <p class="card-text">{{ object.comments_count }}</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="card-block">
-                            <h5 class="card-title bg-primary text-white">Comments</h5>
-                            <p class="card-text">{{ object.comments_count }}</p>
+
+
+                    <div class="card-group">
+                        <div class="card">
+                            <div class="card-block">
+                                <h5 class="card-title bg-primary text-white">Contributors</h5>
+                                <p class="card-text">{{ object.contributors_count }}</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-block">
+
+                                <h5 class="card-title bg-primary text-white">Size</h5>
+                                <p class="card-text"> {{ object.size }}</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-block">
+                                <h5 class="card-title bg-primary text-white">DP Count</h5>
+                                <p class="card-text">{{ object.get_dp_count }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-
-                <div class="card-group">
-                    <div class="card">
-                        <div class="card-block">
-                            <h5 class="card-title bg-primary text-white">Contributors</h5>
-                            <p class="card-text">{{ object.contributors_count }}</p>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-block">
-
-                            <h5 class="card-title bg-primary text-white">Size</h5>
-                            <p class="card-text"> {{ object.size }}</p>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-block">
-                            <h5 class="card-title bg-primary text-white">DP Count</h5>
-                            <p class="card-text">{{ object.get_dp_count }}</p>
-                        </div>
-                    </div>
-                </div>
 
             </div>
             <div class="row">
-                <h3>Contributors </h3>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>User Login</th>
-                        <th>Contributions #</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for contribution in repository.contribution_set.all %}
-                        <tr>
-                            <td><a href="{{ contribution.contributor.url }}">{{ contribution.contributor.login }}</a>
-                            </td>
-                            <td>{{ contribution.amount }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                <ul>
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <h3>Contributors </h3>
+                    {% if repository.contribution_set.all %}
+
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>User Login</th>
+                                <th>Contributions #</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for contribution in repository.contribution_set.all %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ contribution.contributor.url }}">{{ contribution.contributor.login }}</a>
+                                    </td>
+                                    <td>{{ contribution.amount }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>
+                            Contributions were not collected for this project
+                        </p>
+                    {% endif %}
+                </div>
 
 
-                </ul>
             </div>
         </div>
 

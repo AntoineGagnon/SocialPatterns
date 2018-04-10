@@ -26,7 +26,7 @@ class Repository(models.Model):
         return Contribution.objects.filter(repository=self)
 
     def get_comment_pr_ratio(self):
-        return self.comments_count / self.pull_request_count
+        return self.comments_count / self.pull_request_count if self.pull_request_count else 0
 
     def get_dp_count(self):
         return self.patterninrepo_set.count()
@@ -65,7 +65,6 @@ class Contribution(models.Model):
 
 
 class PatternInRepo(models.Model):
-    modifications_count = models.PositiveIntegerField(default=1)
     design_pattern = models.ForeignKey(DesignPattern, on_delete=models.CASCADE)
     repository = models.ForeignKey(Repository, on_delete=models.CASCADE)
 

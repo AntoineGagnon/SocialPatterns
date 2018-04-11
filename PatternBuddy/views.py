@@ -8,7 +8,7 @@ from django.views import generic
 from excel_response import ExcelResponse
 
 from PatternBuddy.models import Repository
-from PatternBuddy.repository_loader import load_from_github
+from PatternBuddy.repository_loader import load_from_github, analyze_repo, get_repo_api
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +35,8 @@ def submit(request):
         repository = load_from_github(repository_name=repository_name)
         if repository is None:
             return HttpResponse("The repository you entered does not exist")
+    if not repository.dp_analyzed:
+        analyze_repo(get_repo_api(repository_name), repository)
     return HttpResponseRedirect(reverse('repository:detail', args=(repository.id,)))
 
 

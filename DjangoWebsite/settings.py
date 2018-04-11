@@ -102,6 +102,8 @@ CONSTANCE_CONFIG = {
     'GET_FILE_MODIFICATIONS_COUNT': (False, 'Get amount of modifications on a file', bool),
     'GET_PATTERN_CLASSES': (False, 'Get classes of each elements of a pattern', bool),
     'GET_CONTRIBUTORS_DATA': (False, 'Get amount of contributions for each contributor', bool),
+    'CHECK_CLOSED_PR': (False, 'Analyze closed pull requests in repositories', bool),
+    'USE_BIGQUERY': (True, 'Use BigQuery when available', bool),
 }
 
 # Database

@@ -24,7 +24,7 @@
 
         <div class="col-6 offset-3">
 
-        <h2>Recent repositories analyzed</h2>
+            <h2>Recent repositories analyzed</h2>
             <div class="row">
                 {% if recent_repo_list %}
 
@@ -44,12 +44,15 @@
         </div>
     </div>
     <div class="row">
-        <div class="card" style="width: 20rem;">
-          <div class="card-body">
-            <h4 class="card-title">Download as Excel</h4>
-            <a href="{% url 'repository:save-to-xlsx' %}" class="card-link">Click here</a>
-          </div>
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 offset-3">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Download as Excel</h4>
+                    <a href="{% url 'repository:save-to-xlsx' %}" class="card-link">Click here</a>
+                </div>
+            </div>
         </div>
+
     </div>
 
 

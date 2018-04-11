@@ -13,16 +13,17 @@
                     <table class="table table-bordered">
                         <thead class="thead-light">
                         <tr>
-                            <th scope="col">Design Patterns</th>
-                            <th scope="col">File</th>
-                            <th scope="col">Role</th>
+                            <th scope="col">Pattern Name</th>
+                            {#                            <th scope="col">File</th>#}
+                            {#                            <th scope="col">Role</th>#}
                         </tr>
                         </thead>
                         <tbody>
                         {% for dp in repository.patterninrepo_set.all %}
                             <tr>
-                                <td rowspan="{{ dp.classfilewithpattern_set.all|length }}">{{ dp.design_pattern }}</td>
-                                {% for classfile in dp.classfilewithpattern_set.all %}
+                            <td>{{ dp.design_pattern }}</td>
+
+                            {% comment %}{% for classfile in dp.classfilewithpattern_set.all %}
 
                                     {% if classfile != dp.classfilewithpattern_set.all.0 %}
                                         <tr>
@@ -31,7 +32,7 @@
                                 <td>{{ classfile.role }}</td>
                                 </tr>
 
-                                {% endfor %}
+                                {% endfor %}{% endcomment %}
                         {% endfor %}
                         </tbody>
                     </table>

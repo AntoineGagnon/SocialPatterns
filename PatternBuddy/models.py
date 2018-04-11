@@ -21,6 +21,7 @@ class Repository(models.Model):
     contributors_count = models.PositiveIntegerField(default=0)
     size = models.PositiveIntegerField(default=0)
     dp_count = models.PositiveIntegerField(default=0)
+    dp_analyzed = models.BooleanField(default=False)
 
     def get_contributions(self):
         return Contribution.objects.filter(repository=self)

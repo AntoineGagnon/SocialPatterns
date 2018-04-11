@@ -8,7 +8,7 @@
     <meta name="author" content="">
     <link rel="icon" href="{% static 'img/favicon.png' %}">
 
-    <title>Starter Template for Bootstrap</title>
+    <title>Social Patterns</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
@@ -36,7 +36,7 @@
                 <a class="nav-link" href="/admin">Admin</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link disabled" href="/repository">Repository</a>
+                <a class="nav-link disabled" href="{% url 'repository:index' %}">Repository</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown"

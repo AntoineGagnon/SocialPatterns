@@ -18,6 +18,11 @@ logger = logging.getLogger(__name__)
 
 
 def analyze_repo(repo_api, repo_db):
+    """
+    Picks the right analyzer for a repository, also performs action common to all repositories
+    :param repo_api: Github API Repository
+    :param repo_db: Database Repository object
+    """
     __java_analysis(repo_api, repo_db)
 
     output = subprocess.check_output(
@@ -32,7 +37,12 @@ def analyze_repo(repo_api, repo_db):
     pass
 
 
-def get_repo_api(repository_name):
+def get_repo_api(repository_name) -> RepoAPI.Repository:
+    """
+    Returns the Github API repository using the name of the repository
+    :param repository_name:
+    :return: Github API repository endpoint
+    """
     repository_name = re.sub(r'^(http(s)*://)*github.com/', '', repository_name)
     g = Github("***REMOVED***")
     repo_api = g.get_repo(repository_name)
@@ -40,6 +50,11 @@ def get_repo_api(repository_name):
 
 
 def load_from_github(repository_name):
+    """
+    Load repository information from Github such as pull requests and contributors
+    :param repository_name:
+    :return:
+    """
     logger.debug(datetime.datetime.now().strftime("%H:%M:%S") + "Loading from github")
     repo_api = get_repo_api(repository_name)
 
@@ -74,21 +89,17 @@ def load_from_github(repository_name):
     logger.debug(datetime.datetime.now().strftime("%H:%M:%S") + "Getting pull request Data")
 
     if config.USE_BIGQUERY:
-        pr_number = 0
-        comments = 0
         bigquery_client: bigquery.Client = bigquery.Client.from_service_account_json("socialpatterns-c03d755a739c.json")
-        dataset_ref = bigquery.DatasetReference("ghtorrent-bq", "ght_2018_04_01")
-        dataset = bigquery_client.get_dataset(dataset_ref)
         repo_url_bigquery = repo_api.html_url.replace("github.com", "api.github.com/repos")
-        queryconfig = QueryJobConfig()
-        queryconfig.use_legacy_sql = False
+        query_config = QueryJobConfig()
+        query_config.use_legacy_sql = False
         query_text = """ SELECT Count(*) AS Pull_Request , (SELECT Count(*) FROM `ghtorrent-bq.ght_2018_04_01.issue_comments`        WHERE  issue_id IN (SELECT id  FROM   `ghtorrent-bq.ght_2018_04_01.issues`  WHERE  pull_request_id IN (SELECT id FROM   `ghtorrent-bq.ght_2018_04_01.pull_requests` WHERE   base_repo_id = (SELECT id FROM   `ghtorrent-bq.ght_2018_04_01.projects` AS pj WHERE  pj.url ="%s" LIMIT 1  ))   )) AS Comments  FROM   `ghtorrent-bq.ght_2018_04_01.pull_requests` WHERE  base_repo_id =   (SELECT id   FROM   `ghtorrent-bq.ght_2018_04_01.projects` AS pj   WHERE  pj.url="%s" LIMIT 1   )  """ % (
             repo_url_bigquery, repo_url_bigquery)
-        queryjob = bigquery_client.query(
+        query_job = bigquery_client.query(
             query_text
-            , job_config=queryconfig)
-        pr_number = list(queryjob.result())[0][0]
-        comments = list(queryjob.result())[0][1]
+            , job_config=query_config)
+        pr_number = list(query_job.result())[0][0]
+        comments = list(query_job.result())[0][1]
     else:
         if config.CHECK_CLOSED_PR:
             pull_requests = repo_api.get_pulls(state="all")
@@ -105,16 +116,17 @@ def load_from_github(repository_name):
                 logger.error("Read timeout when getting comments")
     repo.comments_count = comments
     repo.pull_request_count = pr_number
-
-    repo.save()
-
-    logger.debug(datetime.datetime.now().strftime("%H:%M:%S") + "Getting Design Pattern data")
-    analyze_repo(repo_api, repo)
     repo.save()
     return repo
 
 
 def get_file_from_repo(class_name, repo_name):
+    """
+    Get file containing class from repository
+    :param class_name:
+    :param repo_name:
+    :return:
+    """
     try:
         output = subprocess.check_output(
             "ag -l --vimgrep -G=*.java '(class|interface) " + class_name + "' RepoStorage/" + repo_name + "/",
@@ -129,11 +141,18 @@ def get_file_from_repo(class_name, repo_name):
     return output
 
 
-def process_dpcore_output(output, repo_api, repo_db):
+def process_dpcore_output(dpcore_output, repo_api, repo_db):
+    """
+    Processes the output of the DP-CORE tool and fills the repository in database with design pattern data
+
+    :param dpcore_output:
+    :param repo_api:
+    :param repo_db:
+    """
     logger.debug(datetime.datetime.now().strftime("%H:%M:%S") + "Cleaning up output")
 
-    output = output.decode("utf-8")
-    cleaned_lines = str(output).split("\n")
+    dpcore_output = dpcore_output.decode("utf-8")
+    cleaned_lines = str(dpcore_output).split("\n")
 
     current_dp = None
     current_pattern_in_repo = None

@@ -1,0 +1,7 @@
+openpyxl==2.4.8
+Django==2.0.4
+django-excel-response
+django_debug_toolbar==1.9.1
+pygithub
+google-cloud-bigquery
+django-constance[database]

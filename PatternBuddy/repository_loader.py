@@ -44,7 +44,7 @@ def get_repo_api(repository_name) -> RepoAPI.Repository:
     :return: Github API repository endpoint
     """
     repository_name = re.sub(r'^(http(s)*://)*github.com/', '', repository_name)
-    g = Github("***REMOVED***")
+    g = Github("REDACTED")
     repo_api = g.get_repo(repository_name)
     return repo_api
 
